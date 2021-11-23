@@ -1,15 +1,39 @@
-import React, { FC, useState } from 'react';
-import { Button, StyleSheet, View } from 'react-native';
+import React, { FC, useMemo } from 'react';
+import { Button, Image, StyleSheet, View } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-
+import { CustomTestInput } from '../components/textInput';
+import { useFormField } from '../hooks/useFormField';
 export const LoginView: FC = () => {
-  const [name, setName] = useState('Walle214');
+  const [name, onNameChange, nameErrorMessage] =
+    useFormField('Name is required');
+  const [password, onPasswordChange, passwordErrorMessage] = useFormField(
+    'Password is required'
+  );
+  const areInputValid = useMemo(() => {
+    return (
+      nameErrorMessage === undefined && passwordErrorMessage === undefined
+    );
+  }, [nameErrorMessage, passwordErrorMessage]);
   const getLogin = () => {
-    Actions.home({ text1: name });
+    Actions.home();
   };
   return (
     <View style={styles.container}>
+      <Image source={require('../assets/spicy.jpg')} style={styles.img} />
+      <CustomTestInput
+        name='Nombre'
+        value={name}
+        onChange={onNameChange}
+        errorMessage={nameErrorMessage}
+      />
+      <CustomTestInput
+        name='Contraseña'
+        value={password}
+        onChange={onPasswordChange}
+        errorMessage={passwordErrorMessage}
+      />
       <Button
+        disabled={!areInputValid}
         onPress={getLogin}
         title='Login'
         color='#841584'
@@ -26,4 +50,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  img: {},
 });
